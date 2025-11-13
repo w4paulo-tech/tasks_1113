@@ -1,0 +1,8 @@
+.venv/
+.vscode/
+**/__pycache__/
+mysite/db.sqlite3
+**/migrations/
+!*/migrations/__init__.py
+mysite/mysite/my_settings.py
+**/mysite/tasks/media/

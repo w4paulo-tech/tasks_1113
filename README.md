@@ -1,0 +1,1 @@
+Čia yra užduočių planavimo programa, sukurtas su Django karkasu.
