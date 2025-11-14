@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Darbuotojas{% endblock %}
+
+{% block content %}
+<h2>Darbuotojo informacija: </h2>
+<hr>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <p><b>Darbuotojas: </b> {{ worker.full_name.title }}</p>
+      <p><b>Pareigos: </b> ----</p>
+      <p><b>Pamaina: </b>  {{ worker.get_shift_display }}</p>
+    </div>
+  </div>  
+</div>
+<h2>Paskirtos užduotys: </h2>
+  <a class="btn btn-primary" href="{% url 'uzduotis_create' %}">Pridėti užduotį</a>
+<hr>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Apie užduotį</th>
+      <th>Užduotis</th>
+      <th>Davėjas</th>
+      <th>Statusas</th>
+      <th>Terminas</th>
+    </tr>
+  </thead>
+  <tbody id="task-accordion">
+    {% for instance in worker.tasks.all %}
+    <tr class="{% if instance.status == 'a' %}table-success
+               {% elif instance.status == 'p' %}table-danger
+               {% elif instance.status == 'n' %}table-warning{% endif %}">
+      <td class="d-grid">
+        <button
+        class="btn btn-sm btn-outline-dark"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapse-{{ instance.id}}">
+        Plačiau
+        </button>
+      </td>
+      <td>{{ instance.task.name }}</td>
+      <td>{{ instance.user }}</td>
+      <td>{{ instance.get_status_display }}</td>
+      <td>{{ instance.due_date | date:"Y-m-d H:i:s"}}</td> 
+    </tr>
+    <tr class="collapse" id="collapse-{{ instance.id }}"  data-bs-parent="#task-accordion">
+      <td colspan="5">
+          <div class="p-2 bg-light border rounded">
+              <p><b>Plačiau apie užduotį:</b></p>
+              <ul>
+                  <li style="font-size: 15px;"><b>Atsakingi darbuotojai: </b>
+                    {% for worker in instance.worker.all %}
+                    {{ worker.full_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                  </li>
+                  <li style="font-size: 15px;">
+                    <b>Užduotis sukurta: </b>{{ instance.date | date:"Y-m-d H:i:s"}}
+                  </li>
+                  <li style="font-size: 15px;">
+                    <b>Užduoties aprašymas: </b>{{ instance.task.content }}
+                  </li>
+              </ul>
+          </div>
+      </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+{% endblock %}

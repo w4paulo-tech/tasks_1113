@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Darbuotojai{% endblock %}
+
+{% block content %}
+<h2> Terminalo darbuotojai: </h2>
+<hr>
+<ul>
+    {% for worker in workers %}{% if worker.username != "admin" %}
+    <li>
+    <a href="{{ worker.id }}">{{ worker.full_name.title }}</a>
+    </li>
+    {% endif %}{% endfor %}
+</ul>
+{% endblock %}
+

@@ -17,6 +17,18 @@ class CustomUser(AbstractUser):
     last_name = m.CharField(verbose_name="Pavardė")
     shift = m.CharField(verbose_name="Pamaina", max_length=1, choices=PAMAINA,
                         default='1',)
+    
+    def save(self, *args, **kwargs):
+        if self.first_name:
+            self.first_name = self.first_name.title()
+
+        if self.last_name:
+            self.last_name = self.last_name.title()    
+        super().save(*args, **kwargs)
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Darbuotojas"
@@ -24,6 +36,8 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
+# Perkelt user ir date į UzduotisInstance. Prideti komentarus UzduotisInstance ir prie User
 
 class Uzduotis(m.Model):
     name = m.CharField(verbose_name="Pavadinimas")
@@ -42,6 +56,10 @@ class Uzduotis(m.Model):
         return self.name
 
 class UzduotisInstance(m.Model):
+    date = m.DateTimeField(verbose_name="Sukūrimo data", auto_now_add=True)
+    user = m.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name="Kieno sukurta",
+                        on_delete=m.SET_NULL, null=True, blank=True)
+
     task = m.ForeignKey(to="Uzduotis",
                         verbose_name="Užduotis",
                         on_delete=m.CASCADE,

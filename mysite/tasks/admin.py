@@ -4,7 +4,13 @@ from django.contrib.auth.admin import UserAdmin
 
 class CustomUserAdmin(a.ModelAdmin):
     list_display = ['username', 'first_name', 'shift']
-    fieldsets = UserAdmin.fieldsets
+    fieldsets = (
+        ('Custom Fields', {
+            'fields': ['shift'],
+            'classes': ['extrapretty']
+        }),
+        *UserAdmin.fieldsets,
+    )
     ordering = ['shift']
 
 class UzduotisAdmin(a.ModelAdmin):

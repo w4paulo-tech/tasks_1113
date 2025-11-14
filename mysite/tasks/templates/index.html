@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Mūsų biblioteka</title>
-</head>
-<body>
-<h1>Mūsų biblioteka</h1>
-<p>Sveiki atvykę į mūsų bibliotekos svetainę!</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}PRADŽIA{% endblock %}
+
+{% block content %}
+<h2>Terminale šiuo metu yra:</h2>
+<hr>
+<ul>
+  <li><b>Darbuotojų: </b>{{ num_workers }}</li>
+  <li><b>Užduočių: </b>{{ num_instances }}</li>
+  <li><b>Neatliktų užduočių: </b>{{ num_late }}</li>
+</ul>
+{% endblock %}

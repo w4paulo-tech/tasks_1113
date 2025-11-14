@@ -1,0 +1,13 @@
+h2 {
+    color: red;
+}
+
+.container li {
+    font-size: 18px;
+    margin-left: 20px;
+} 
+
+.collapsing {
+    transition-duration: 0.08s;
+    transition-timing-function: ease-out;
+}
