@@ -52,9 +52,26 @@ class UzduotisInstanceCreateView(LoginRequiredMixin, g.CreateView):
         return base           
 
     def form_valid(self, form):
-        form.instance.user = self.request.user   
-        form.save()
-        return super().form_valid(form)
+        name = form.cleaned_data.get('name')
+        content = form.cleaned_data.get('content')
+        shift = self.request.user.shift if hasattr(self.request.user, 'shift') else '1'
+        uzduotis = Uzduotis.objects.create(
+            name=name,
+            content=content,
+            user=self.request.user,
+            shift=shift
+        )
+        form.instance.task = uzduotis
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
+        if not self.request.user.is_staff:
+            self.object.worker.add(self.request.user)
+            
+        return response
+    
+    def get_success_url(self):
+        worker_pk = self.kwargs.get('worker_pk')
+        return reverse_lazy("worker", kwargs={"pk": worker_pk})
 
 class SignUp(g.CreateView):
     form_class = CustomUserCreateForm
