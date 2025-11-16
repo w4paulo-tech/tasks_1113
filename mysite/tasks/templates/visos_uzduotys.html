@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Užduotys{% endblock %}
+
+{% block content %}
+<h2> Terminalo užduotys: </h2>
+<hr>
+<ul>
+    {% for task in task_list %}
+    <li>
+    <a href="{{ task.id }}">{{ task.name }}</a>
+    </li>
+    {% empty %}
+  <p class="mx-3">No results found</p>
+    {% endfor %}
+</ul>
+{% endblock %}

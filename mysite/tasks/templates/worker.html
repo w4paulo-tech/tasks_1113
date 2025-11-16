@@ -10,11 +10,20 @@
     <div class="col-md-6 col-sm-12">
       <p><b>Darbuotojas: </b> {{ worker.full_name.title }}</p>
       <p><b>Pareigos: </b> ----</p>
-      <p><b>Pamaina: </b>  {{ worker.get_shift_display }}</p>
+      {% if user.is_staff %}
+      <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% load crispy_forms_tags %}
+      {{ form | crispy }}
+      <button type="submit" class="btn btn-success">Save</button>
+      </form>
+      {% else %}
+      <p><b>Pamaina: </b>{{ worker.get_shift_display }}</p>
+      {% endif %}
     </div>
   </div>  
 </div>
-<h2>Paskirtos užduotys: </h2>
+<h2 class="mt-3">Paskirtos užduotys: </h2>
   <a class="btn btn-primary" href="{% url 'uzduotis_create' worker.pk %}">Pridėti užduotį</a>
 <hr>
 <table class="table table-hover">
@@ -62,6 +71,16 @@
                   <li style="font-size: 15px;">
                     <b>Užduoties aprašymas: </b>{{ instance.task.content }}
                   </li>
+                  {% if instance.notes %}
+                  <li class="mb-2"  style="font-size: 15px;">
+                    <b>Užduoties komentaras: </b>{{ instance.notes }}
+                  </li>
+                  {% endif %}
+                  {% if user.is_staff or user == instance.user %}
+                      <a class="btn btn-primary" href="{% url 'uzduotis_update' worker.pk instance.pk %}">Redaguoti užduotį</a>
+                      <a class="btn btn-danger" href="{% url 'uzduotis_update' worker.pk instance.pk %}">Ištrinti užduotį</a>
+
+                      {% endif %}
               </ul>
           </div>
       </td>

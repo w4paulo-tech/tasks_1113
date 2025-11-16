@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Paieška{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<h2>Paieškos rezultatai:</h2>
+<hr>
+{% if query != "" %}
+<p>Pieškos "<b>{{ query }}</b>" rezultatai:</p>
+{% else %}
+<p>Rodomi visi darbuotojai: </p>
+{% endif %}
+<div class="row">
+  {% for worker in workers %} {% if worker.username != "admin" %}
+  <li>
+    <a href="{{ worker.id }}">{{ worker.full_name.title }}</a>
+    </li>
+    {% endif %}
+  {% empty %}
+  <p class="mx-3">No results found</p>
+  {% endfor %}
+</div>
+{% endblock %}

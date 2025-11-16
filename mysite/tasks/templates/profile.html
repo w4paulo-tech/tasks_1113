@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}User profile{% endblock %}
+
+{% block content %}
+<h2>My profile</h2>
+<hr>
+<div class="row">
+  <div class="col-md-7">
+      <p><b>Username: </b>{{ user.username }}</p>
+      <p><b>First name: </b>{{ user.first_name }}</p>
+      <p><b>Last name: </b>{{ user.last_name }}</p>
+      <p><b>Email: </b>{{ user.email }}</p>
+  </div>
+
+</div>
+    <h2>Edit profile</h2>
+    <hr>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% load crispy_forms_tags %}
+      {{ form | crispy }}
+      <button type="submit" class="btn btn-success">Save</button>
+    </form>
+
+{% endblock %}

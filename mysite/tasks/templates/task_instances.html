@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Užduotys{% endblock %}
+
+{% block content %}
+<h2> {{ uzduotis_definition.name }} </h2>
+<hr>
+<ul>
+    {% for task in task_inst_list %}
+    <li>
+    <a href="{{ task.pk }}">{{ task.date }} {{ task.display_worker }}</a>
+    </li>
+    {% empty %}
+  <p class="mx-3">No results found</p>
+    {% endfor %}
+</ul>
+{% endblock %}

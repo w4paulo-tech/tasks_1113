@@ -9,8 +9,10 @@
     {% for worker in workers %}{% if worker.username != "admin" %}
     <li>
     <a href="{{ worker.id }}">{{ worker.full_name.title }}</a>
-    </li>
-    {% endif %}{% endfor %}
+    </li>{% endif %}
+    {% empty %}
+  <p class="mx-3">No results found</p>
+    {% endfor %}
 </ul>
 {% endblock %}
 

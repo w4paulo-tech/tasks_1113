@@ -59,7 +59,7 @@ class UzduotisInstance(m.Model):
     date = m.DateTimeField(verbose_name="Sukūrimo data", auto_now_add=True)
     user = m.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name="Kieno sukurta",
                         on_delete=m.SET_NULL, null=True, blank=True)
-
+    notes = m.TextField(verbose_name="Komentarai", null=True, blank=True)
     task = m.ForeignKey(to="Uzduotis",
                         verbose_name="Užduotis",
                         on_delete=m.CASCADE,
