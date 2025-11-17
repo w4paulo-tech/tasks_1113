@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Task delete{% endblock %}
+
+{% block content %}
+<h2>Užduoties trynimas</h2>
+<hr>
+<p>Ar tikrai norite ištrinti užduotį: "{{ object.task.name }}"?</p>
+<form method="POST">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    <button type="submit" class="btn btn-outline-success">Patvirtinti</button>
+    <a class="btn btn-outline-danger" href="{% url 'worker' worker.pk %}">Atšaukti</a>
+</form>
+
+{% endblock %}

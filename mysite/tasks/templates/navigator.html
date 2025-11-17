@@ -13,9 +13,6 @@
                 <a class="nav-link" href="{% url 'workers' %}">Darbuotojai</a>
             </li>
             <li>
-              <a class="nav-link ps-1 pe-1" href="{% url 'signup' %}">Naujas darbuotojas</a>
-            </li>
-            <li>
               <a class="nav-link ps-1 pe-1" href="{% url 'uzduotys' %}">Užduotys</a>
             </li>
             {% endif %}
@@ -32,9 +29,9 @@
             {{ user.username }}
             
           </a>
-          <ul class="dropdown-menu ">
+          <ul class="dropdown-menu dropdown-menu-dark">
             <li>
-              <a class="dropdown-item" href="{% url 'worker' request.user.pk %}">Mano užduotys</a>
+              <a class="dropdown-item " href="{% url 'worker' request.user.pk %}">Mano užduotys</a>
             </li>
             <li>
               <a class="dropdown-item" href="{% url 'profile' %}">Mano profilis</a>

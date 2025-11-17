@@ -35,9 +35,9 @@ class CustomUser(AbstractUser):
         verbose_name_plural = "Darbuotojai"
 
     def __str__(self):
-        return f"{self.username}"
+        return self.full_name
 
-# Perkelt user ir date į UzduotisInstance. Prideti komentarus UzduotisInstance ir prie User
+# Prideti komentarus UzduotisInstance ir prie User
 
 class Uzduotis(m.Model):
     name = m.CharField(verbose_name="Pavadinimas")

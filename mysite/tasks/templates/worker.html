@@ -10,28 +10,33 @@
     <div class="col-md-6 col-sm-12">
       <p><b>Darbuotojas: </b> {{ worker.full_name.title }}</p>
       <p><b>Pareigos: </b> ----</p>
+      <div class="d-flex align-items-center">
+      <p><b>Pamaina: </b>{{ worker.get_shift_display }}</p>
       {% if user.is_staff %}
-      <form method="post" enctype="multipart/form-data">
+      <form method="post" class="d-flex ms-auto" enctype="multipart/form-data">
       {% csrf_token %}
       {% load crispy_forms_tags %}
-      {{ form | crispy }}
-      <button type="submit" class="btn btn-success">Save</button>
+      {{ form.shift | as_crispy_field }}
+      <div class="ms-1">
+        <button type="submit" class="btn btn-outline-success">Pakeisti</button>
+      </div>
       </form>
-      {% else %}
-      <p><b>Pamaina: </b>{{ worker.get_shift_display }}</p>
       {% endif %}
+      </div>
     </div>
   </div>  
 </div>
-<h2 class="mt-3">Paskirtos užduotys: </h2>
-  <a class="btn btn-primary" href="{% url 'uzduotis_create' worker.pk %}">Pridėti užduotį</a>
-<hr>
+<div class="d-flex align-items-center">
+<h2>Paskirtos užduotys: </h2>
+  <a class="btn btn-primary ms-auto" href="{% url 'uzduotis_create' worker.pk %}">Pridėti užduotį</a>
+</div>
+  <hr>
 <table class="table table-hover">
   <thead>
     <tr>
       <th>Apie užduotį</th>
       <th>Užduotis</th>
-      <th>Davėjas</th>
+      <th>Sukūrė</th>
       <th>Statusas</th>
       <th>Terminas</th>
     </tr>
@@ -77,9 +82,10 @@
                   </li>
                   {% endif %}
                   {% if user.is_staff or user == instance.user %}
-                      <a class="btn btn-primary" href="{% url 'uzduotis_update' worker.pk instance.pk %}">Redaguoti užduotį</a>
-                      <a class="btn btn-danger" href="{% url 'uzduotis_update' worker.pk instance.pk %}">Ištrinti užduotį</a>
-
+                  <div class="d-flex mt-2">
+                      <a class="btn btn-outline-primary me-2" href="{% url 'uzduotis_update' worker.pk instance.pk %}">Redaguoti užduotį</a>
+                      <a class="btn btn-outline-danger" href="{% url 'uzduotis_delete' worker.pk instance.pk %}">Ištrinti užduotį</a>
+                  </div>    
                       {% endif %}
               </ul>
           </div>

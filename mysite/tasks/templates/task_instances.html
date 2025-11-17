@@ -8,7 +8,13 @@
 <ul>
     {% for task in task_inst_list %}
     <li>
-    <a href="{{ task.pk }}">{{ task.date }} {{ task.display_worker }}</a>
+    <a href="{{ task.pk }}">{{ task.date }} 
+      {% for worker in task.worker.all %}
+        {{ worker.full_name }}{% if not forloop.last %}, {% endif %}
+      {% empty %}
+        (Nėra priskirtų darbuotojų)
+      {% endfor %}  
+      </a>
     </li>
     {% empty %}
   <p class="mx-3">No results found</p>

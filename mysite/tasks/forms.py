@@ -6,7 +6,8 @@ class BaseUzduotisInstanceForm(f.ModelForm):
     task_default = f.ModelChoiceField(
         queryset=Uzduotis.objects.all().order_by('name'),
         label="Užduoties šablonas",
-        help_text="pasirinkite užduoties tipą iš sąrašo."
+        help_text="Pasirinkite užduoties tipą iš sąrašo.",
+        required=True
     )
     class Meta:
         model = UzduotisInstance
@@ -31,3 +32,9 @@ class StaffUserUpdateForm(f.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['shift']
+        widgets = {
+            'shift': f.Select(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'shift': '',
+        }

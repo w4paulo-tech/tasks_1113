@@ -3,7 +3,11 @@
 {% block title %}Darbuotojai{% endblock %}
 
 {% block content %}
+<div class="d-flex">
 <h2> Terminalo darbuotojai: </h2>
+
+  <a class="btn btn-outline-dark align-items-center ms-auto my-1" href="{% url 'signup' %}"><b>Naujas darbuotojas +</b></a>
+</div>
 <hr>
 <ul>
     {% for worker in workers %}{% if worker.username != "admin" %}
