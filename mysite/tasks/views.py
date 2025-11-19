@@ -122,6 +122,19 @@ class CustomUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, g.UpdateView
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
     
+class UzduotisInstanceStaffCreateView(LoginRequiredMixin, UserPassesTestMixin, g.CreateView):
+    model = UzduotisInstance
+    template_name = "uzduotis_form.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def form_valid(self, form):
+
+        super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy("uzduotys_inst", kwargs={"pk": self.kwargs.get('pk')})
 
 class UzduotisInstanceCreateView(LoginRequiredMixin, g.CreateView):
     model = UzduotisInstance
@@ -136,6 +149,7 @@ class UzduotisInstanceCreateView(LoginRequiredMixin, g.CreateView):
         worker_pk = self.kwargs.get('worker_pk')
         form.instance.task = form.cleaned_data.get('task_default')
         form.instance.user = self.request.user
+        form.instance.shift = CustomUser.objects.get(pk=worker_pk).shift
         response = super().form_valid(form)
         self.object.worker.add(CustomUser.objects.get(pk=worker_pk))
         return response

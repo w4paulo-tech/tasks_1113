@@ -67,7 +67,9 @@ class UzduotisInstance(m.Model):
     worker = m.ManyToManyField(to=settings.AUTH_USER_MODEL, verbose_name="Darbuotojas",
                                related_name="tasks")
     due_date = m.DateTimeField(verbose_name="Padaryti iki", null=True, blank=True)
-    
+    shift = m.CharField(verbose_name="Pamaina", max_length=1, choices=PAMAINA,
+                        default='1',)
+
     def display_worker(self):
         return ", ".join(worker.username for worker in self.worker.all())
     

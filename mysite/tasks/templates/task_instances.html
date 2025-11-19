@@ -3,21 +3,41 @@
 {% block title %}Užduotys{% endblock %}
 
 {% block content %}
-<h2> {{ uzduotis_definition.name }} </h2>
+<div class="d-flex align-items-center">
+  <h2> {{ uzduotis_definition.name }}: </h2>
+  <a class="btn btn-outline-dark ms-auto" href="{% url 'uzduotys_staff_create' uzduotis_definition.pk %}">
+    <b>Pridėti užduotį +</b>
+  </a>
+</div>
 <hr>
-<ul>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Sukūrimo data</th>
+      <th>Atsakingi darbuotojai</th>
+      <th>Pamaina</th>
+      <th>Statusas</th>
+      <th>Terminas</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for task in task_inst_list %}
-    <li>
-    <a href="{{ task.pk }}">{{ task.date }} 
+    <tr class="{% if task.status == 'a' %}table-success
+               {% elif task.status == 'p' %}table-danger
+               {% elif task.status == 'n' %}table-warning{% endif %}">
+    <td>{{ task.date | date:"Y-m-d H:i:s" }}</td> 
+    <td>
       {% for worker in task.worker.all %}
-        {{ worker.full_name }}{% if not forloop.last %}, {% endif %}
+      {{ worker.full_name }}{% if not forloop.last %}, {% endif %}
       {% empty %}
-        (Nėra priskirtų darbuotojų)
-      {% endfor %}  
-      </a>
-    </li>
+      (Nėra priskirtų darbuotojų)
+      {% endfor %}
+    </td>
+    <td>{{ task.get_shift_display }}</td>
+    <td>{{ task.get_status_display }}</td>
+    <td>{{ task.due_date | date:"Y-m-d H:i:s" }}</td>
     {% empty %}
   <p class="mx-3">No results found</p>
-    {% endfor %}
-</ul>
+    {% endfor %}</tr>
+</table>
 {% endblock %}
