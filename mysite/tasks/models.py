@@ -46,7 +46,7 @@ class Uzduotis(m.Model):
     user = m.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name="Kieno sukurta",
                         on_delete=m.SET_NULL, null=True, blank=True)
     shift = m.CharField(verbose_name="Pamaina", max_length=1, choices=PAMAINA,
-                          default='1',)
+                          default='1', null=True, blank=True)
     
     class Meta:
         verbose_name = "Užduotis"
@@ -81,6 +81,7 @@ class UzduotisInstance(m.Model):
     class Meta:
         verbose_name = "Dienos užduotis"
         verbose_name_plural = "Dienos užduotys"
+        ordering = ["-date"]
 
     def __str__(self):
         return f"{self.task.name}"

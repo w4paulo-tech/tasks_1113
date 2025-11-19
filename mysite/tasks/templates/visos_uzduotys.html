@@ -3,7 +3,12 @@
 {% block title %}Užduotys{% endblock %}
 
 {% block content %}
-<h2> Terminalo užduotys: </h2>
+<div class="d-flex align-items-center">
+  <h2> Terminalo užduotys: </h2>
+  <a class="btn btn-outline-dark ms-auto" href="{% url 'uzduotys_template_create' %}">
+    <b>Pridėti užduoties šabloną +</b>
+  </a>  
+</div>
 <hr>
 <ul>
     {% for task in task_list %}
@@ -11,7 +16,7 @@
     <a href="{{ task.id }}">{{ task.name }}</a>
     </li>
     {% empty %}
-  <p class="mx-3">No results found</p>
+  <p class="mx-3">Užduočių šablonų nėra.</p>
     {% endfor %}
 </ul>
 {% endblock %}

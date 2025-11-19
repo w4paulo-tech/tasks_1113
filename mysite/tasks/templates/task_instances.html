@@ -37,7 +37,7 @@
     <td>{{ task.get_status_display }}</td>
     <td>{{ task.due_date | date:"Y-m-d H:i:s" }}</td>
     {% empty %}
-  <p class="mx-3">No results found</p>
+  <p class="mx-3">Užduočių nėra.</p>
     {% endfor %}</tr>
 </table>
 {% endblock %}

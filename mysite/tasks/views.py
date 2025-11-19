@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from .models import CustomUser, Uzduotis, UzduotisInstance
 from .models import PAMAINA
-from .forms import (BaseUzduotisInstanceForm as base,
-                    StaffUzduotisInstanceForm as staff,
+from .forms import (BaseUzduotisInstanceForm as Base,
+                    StaffUzduotisInstanceForm as Staff,
                     CustomUserCreateForm,
                     CustomUserUpdateForm,
-                    StaffUserUpdateForm)
+                    StaffUserUpdateForm,
+                    StaffUzduotisForm,
+                    StaffUzduotisTemplateForm)
 from django.views.generic import TemplateView
 from django.views import generic as g
 from django.views.generic.edit import FormMixin
@@ -35,6 +37,7 @@ class IndexView(TemplateView):
 
         return context
     
+
 class UzduotisListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
     model = Uzduotis
     template_name = "visos_uzduotys.html"
@@ -50,14 +53,11 @@ class UzduotisListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
             filters = Q() 
             shift_keys = []
             filters |= Q(name__icontains=query)
-            try:
-                shift_keys = [
-                    key for key, label in PAMAINA if query.lower() in label.lower()
-                ]    
-                filters |= Q(shift__in=shift_keys)
-                filters |= Q(shift__icontains=query)
-            except NameError:
-                pass                
+            shift_keys = [
+                key for key, label in PAMAINA if query.lower() in label.lower()
+            ]    
+            filters |= Q(shift__in=shift_keys)
+            filters |= Q(shift__icontains=query)
             filters |= Q(instances__worker__first_name__icontains=query)
             filters |= Q(instances__worker__last_name__icontains=query)
             if shift_keys: 
@@ -65,6 +65,7 @@ class UzduotisListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
             queryset = queryset.filter(filters).distinct()
         return queryset
     
+
 class UzduotisInstanceListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
     model = UzduotisInstance
     template_name = "task_instances.html" 
@@ -84,6 +85,7 @@ class UzduotisInstanceListView(LoginRequiredMixin, UserPassesTestMixin, g.ListVi
     def test_func(self):
         return self.request.user.is_staff 
     
+
 class CustomUserListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
     model = CustomUser
     template_name = "workers.html"
@@ -107,6 +109,7 @@ class CustomUserListView(LoginRequiredMixin, UserPassesTestMixin, g.ListView):
             )                                    
         return queryset
 
+
 class CustomUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, g.UpdateView):
     model = CustomUser
     template_name = "worker.html"
@@ -122,28 +125,67 @@ class CustomUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, g.UpdateView
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
     
-class UzduotisInstanceStaffCreateView(LoginRequiredMixin, UserPassesTestMixin, g.CreateView):
-    model = UzduotisInstance
-    template_name = "uzduotis_form.html"
 
+class UzduotisStaffCreateView(LoginRequiredMixin, UserPassesTestMixin, g.CreateView):
+    model = Uzduotis
+    template_name = "uzduotis_form.html"
+    form_class = StaffUzduotisTemplateForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
     def test_func(self):
         return self.request.user.is_staff
     
     def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy("uzduotys_inst", kwargs={"pk": self.object.pk})
+    
 
-        super().form_valid(form)
+class UzduotisInstanceStaffCreateView(LoginRequiredMixin, UserPassesTestMixin, g.CreateView):
+    model = UzduotisInstance
+    template_name = "uzduotis_form.html"
+    form_class = StaffUzduotisForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task'] = get_object_or_404(Uzduotis, pk=self.kwargs.get('pk'))
+        return context
+
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['task'] = get_object_or_404(Uzduotis, pk=self.kwargs.get('pk'))
+        return initial
+    
+    def form_valid(self, form):
+        form.instance.task = get_object_or_404(Uzduotis, pk=self.kwargs.get('pk'))
+        form.instance.user = self.request.user
+        return super().form_valid(form)
     
     def get_success_url(self):
         return reverse_lazy("uzduotys_inst", kwargs={"pk": self.kwargs.get('pk')})
 
+
 class UzduotisInstanceCreateView(LoginRequiredMixin, g.CreateView):
     model = UzduotisInstance
     template_name = "uzduotis_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['worker'] = get_object_or_404(CustomUser, pk=self.kwargs.get('worker_pk'))
+        return context
     
     def get_form_class(self):
         if self.request.user.is_staff:
-            return staff
-        return base           
+            return Staff
+        return Base           
 
     def form_valid(self, form):
         worker_pk = self.kwargs.get('worker_pk')
@@ -156,15 +198,21 @@ class UzduotisInstanceCreateView(LoginRequiredMixin, g.CreateView):
     
     def get_success_url(self):
         return reverse_lazy("worker", kwargs={"pk": self.kwargs.get('worker_pk')})
-    
+
+
 class UzduotisInstanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, g.UpdateView):
     model = UzduotisInstance
     template_name = "uzduotis_form.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['worker'] = get_object_or_404(CustomUser, pk=self.kwargs.get('worker_pk'))
+        return context
+
     def get_form_class(self):
         if self.request.user.is_staff:
-            return staff
-        return base    
+            return Staff
+        return Base    
     
     def get_success_url(self):
         return reverse_lazy("worker", kwargs={"pk": self.kwargs.get('worker_pk')})
@@ -192,13 +240,14 @@ class UzduotisInstanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, g.Upda
             related_task.save()
         return super().form_valid(form)
 
+
 class UzduotisInstanceDeleteView(LoginRequiredMixin, UserPassesTestMixin, g.DeleteView):
     model = UzduotisInstance
     template_name = "uzduotis_delete.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['worker'] = CustomUser.objects.get(pk=self.kwargs.get('worker_pk'))
+        context['worker'] = get_object_or_404(CustomUser, pk=self.kwargs.get('worker_pk'))
         return context
 
     def get_success_url(self):
@@ -207,10 +256,12 @@ class UzduotisInstanceDeleteView(LoginRequiredMixin, UserPassesTestMixin, g.Dele
     def test_func(self):
         return self.get_object().user == self.request.user or self.request.user.is_staff
 
+
 class SignUp(g.CreateView):
     form_class = CustomUserCreateForm
     template_name = "signup.html"
     success_url = reverse_lazy("index")
+
 
 class ProfileUpdateView(LoginRequiredMixin, g.UpdateView):
     model = CustomUser

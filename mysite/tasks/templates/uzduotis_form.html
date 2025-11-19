@@ -8,6 +8,13 @@
     {% csrf_token %}
     {% load crispy_forms_tags %}
     {{ form | crispy }}
-    <button type="submit" class="btn btn-primary">Patvirtinti</button>
+    <button type="submit" class="btn btn-outline-success me-1">Patvirtinti</button>
+    {% if worker %}
+    <a class="btn btn-outline-danger" href="{% url 'worker' worker.pk %}">Atšaukti</a>
+    {% elif task %}
+    <a class="btn btn-outline-danger" href="{% url 'uzduotys_inst' task.pk %}">Atšaukti</a>
+    {% else %}
+    <a class="btn btn-outline-danger" href="{% url 'uzduotys' %}">Atšaukti</a>
+    {% endif %}
 </form>
 {% endblock %}
